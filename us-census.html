@@ -1,0 +1,45 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="us-census-geocoder.html">
+<link rel="import" href="us-census-population.html">
+
+<dom-module id="us-census">
+    <template>
+        <my-location data="{{location}}"></my-location>
+
+        <us-census-geocoder latitude="[[location.latitude]]" longitude="[[location.longitude]]" county="{{county}}" state="{{state}}"></us-census-geocoder>
+        <us-census-population state="{{state}}"></us-census-population>
+    </template>
+    <script>
+        class UsCensus extends Polymer.Element {
+            static get is() {
+                return 'us-census';
+            }
+
+            static get properties() {
+                return {
+                    stateCode: {
+                        type: String
+                    },
+                    geocoder: {
+                        type: Object
+                    },
+                    state: {
+                        type: Object,
+                        notify: true
+                    },
+                    county: {
+                        type: Object,
+                        notify: true
+                    }
+                }
+            }
+
+            static get observers() {
+                return []
+            }
+        }
+
+        window.customElements.define(UsCensus.is, UsCensus);
+    </script>
+</dom-module>

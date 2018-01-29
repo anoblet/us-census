@@ -1,0 +1,166 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../src/blocks/my-location.html">
+
+<link rel="import" href="../../../bower_components/my-debug/my-debug.html">
+
+<dom-module id="us-census-geocoder">
+    <template>
+        <my-location data="{{_location}}"></my-location>
+        <iron-ajax url="[[_requestUrl()]]" on-response="handleResponse" handle-as="json" debounce-duration="5000"></iron-ajax>
+        <!--
+        Geocoder:
+        <ul>
+            <li>
+                State code: [[stateCode]]
+            </li>
+        </ul>
+        -->
+        <!--
+        <paper-tooltip>test</paper-tooltip>
+        -->
+    </template>
+    <script>
+        class UsCensusGeocoder extends SingletonMixin(DebugMixin(Polymer.Element)) {
+            static get is() {
+                return 'us-census-geocoder';
+            }
+
+            static get properties() {
+                return {
+                    // Constants
+                    _baseUrl: {
+                        type: String,
+                        value: "https://geocoding.geo.census.gov/geocoder/geographies"
+                    },
+                    _benchmark: {
+                        type: String,
+                        value: "Public_AR_Current"
+                    },
+                    _format: {
+                        type: String,
+                        value: "json"
+                    },
+                    _inputFormat: {
+                        type: String,
+                        value: "coordinates"
+                    },
+                    _vintage: {
+                        type: String,
+                        value: "Current_Current"
+                    },
+                    // Computed
+                    _requestUrl: {
+                        type: String,
+                        // computed: "_requestUrl(_baseUrl, _inputFormat)"
+                    },
+                    // Input
+                    latitude: {
+                        type: String
+                    },
+                    longitude: {
+                        type: String
+                    },
+                    // Output
+                    _rawData: {
+                        type: Object
+                    },
+                    data: {
+                        type: Object,
+                        value: {},
+                        notify: true
+                    },
+                    stateCode: {
+                        type: String,
+                        notify: true
+                    },
+                    location: {
+                        type: Object
+                    },
+                    state: {
+                        type: Object,
+                        notify: true
+                    },
+                    county: {
+                        type: Object,
+                        notify: true
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    '_locationChanged(latitude, longitude)'
+                ]
+            }
+
+            _locationChanged() {
+                let ajax = this.shadowRoot.querySelector('iron-ajax');
+                ajax.params = this._getParams();
+                ajax.generateRequest();
+            }
+
+            _getParams() {
+                return {
+                    "benchmark": this._benchmark,
+                    "vintage": this._vintage,
+                    "x": this._location.longitude,
+                    "y": this._location.latitude,
+                    "format": this._format
+                }
+            }
+
+            handleResponse(event) {
+                let response = event.detail.response;
+                this._rawData = response;
+                let county = response.result.geographies.Counties[0]
+                let newCounty = {};
+                newCounty.name = county.BASENAME;
+                newCounty.areaLand = county.AREALAND;
+                newCounty.areaLandFormatted = county.AREALAND.toLocaleString();
+                newCounty.areaWater = county.AREAWATER;
+                newCounty.areaWaterFormatted = county.AREAWATER.toLocaleString();
+                console.log(county);
+                this.set('county', newCounty);
+                let state = response.result.geographies.States[0];
+                let newState = {}
+                newState.name = state.NAME;
+                newState.areaLand = state.AREALAND;
+                newState.areaLandFormatted = state.AREALAND.toLocaleString();
+                newState.areaWater = state.AREAWATER;
+                newState.areaWaterFormatted = state.AREAWATER.toLocaleString();
+                newState.code = state.STATE;
+                this.set('state', newState);
+                console.log(state);
+
+                // this.data.county = county;
+                // this.data = this.data;
+                console.log(county);
+                console.log(Application.debug);
+                if(Application.debug) {
+                    console.log(this._rawData);
+                }
+                if (this._rawData.result.geographies) {
+                    this.stateCode = this._rawData.result.geographies.States[0].STATE;
+                    this.data.stateCode = this._rawData.result.geographies.States[0].STATE;
+                } else {
+                    console.log("Error")
+                }
+            }
+
+            _requestUrl(_baseUrl, _inputFormat) {
+                return this._baseUrl + "/" + this._inputFormat;
+            }
+
+            ready() {
+                super.ready();
+
+                this.debug = this;
+            }
+        }
+
+        window.customElements.define(UsCensusGeocoder.is, UsCensusGeocoder);
+    </script>
+</dom-module>
