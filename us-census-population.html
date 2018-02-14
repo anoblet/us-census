@@ -3,78 +3,82 @@
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="us-census-population">
-  <template>
-    <style>
-      :host {
-      }
-    </style>
-    <iron-ajax id="ajax" url="[[_baseUrl]]" on-response="_handleResponse"></iron-ajax>
-  </template>
-  <script>
-      class UsCensusPopulation extends Polymer.Element {
-          static get is() {
-              return 'us-census-population';
-          }
+    <template>
+        <style>
+            :host {
+            }
+        </style>
+        <iron-ajax id="ajax" url="[[_baseUrl]]" on-response="_handleResponse"></iron-ajax>
+    </template>
+    <script>
+        class UsCensusPopulation extends Polymer.Element {
+            static get is() {
+                return 'us-census-population';
+            }
 
-          static get properties() {
-              return {
-                  _baseUrl: {
-                      type: String,
-                      value: "https://api.census.gov/data/2016/pep/population"
-                  },
-                  data: {
-                      type: String,
-                      notify: true
-                  },
-                  fields: {
-                      type: Array,
-                      value: function () {
-                          return [
-                              // "GEONAME",
-                              "POP"
-                          ]
-                      }
-                  },
-                  state: {
-                      type: Object,
-                      notify: true
-                  }
-              }
-          }
+            static get properties() {
+                return {
+                    _baseUrl: {
+                        type: String,
+                        value: "https://api.census.gov/data/2016/pep/population"
+                    },
+                    data: {
+                        type: String,
+                        notify: true
+                    },
+                    fields: {
+                        type: Array,
+                        value: function () {
+                            return [
+                                // "GEONAME",
+                                "POP"
+                            ]
+                        }
+                    },
+                    state: {
+                        type: Object,
+                        notify: true
+                    }
+                }
+            }
 
-          static get observers() {
-              return [
-                  "_stateChanged(state.code)"
-              ]
-          }
+            static get observers() {
+                return [
+                    "_stateChanged(state.code)"
+                ]
+            }
 
-          _getParams() {
-              let fields = this.fields.join(", ");
-              console.log(fields);
-              return {
-                  "get": fields,
-                  "for": "state:" + this.state.code,
-                  // "key": this.apiKey
-              }
-          }
+            _getParams() {
+                let fields = this.fields.join(", ");
+                console.log(fields);
+                return {
+                    "get": fields,
+                    "for": "state:" + this.state.code,
+                    // "key": this.apiKey
+                }
+            }
 
-          _handleResponse(e) {
-              let response = e.detail.response;
-              let population = response[1][0];
-              // Format the number
-              population = population.toLocaleString();
-              this.set('state.population', population);
-          }
+            _handleResponse(e) {
+                let response = e.detail.response;
+                if (response) {
+                    console.log(response);
+                    let population = Number(response[1][0]);
+                    this.set('state.population', population);
+                    // Format the number
+                    let populationFormatted = population.toLocaleString();
+                    this.set('state.populationFormatted', populationFormatted);
+                }
+            }
 
-          _stateChanged() {
-              console.log("State changed");
-              console.log(this.state);
-              let ajax = this.shadowRoot.querySelector("iron-ajax");
-              ajax.params = this._getParams();
-              ajax.generateRequest();
-          }
-      }
+            _stateChanged() {
+                console.log("State changed");
+                console.log(this.state);
+                let ajax = this.shadowRoot.querySelector("iron-ajax");
+                ajax.params = this._getParams();
+                ajax.generateRequest();
+            }
+        }
 
-      window.customElements.define(UsCensusPopulation.is, UsCensusPopulation);
-  </script>
+        window.customElements.define(UsCensusPopulation.is, UsCensusPopulation);
+    </script>
 </dom-module>

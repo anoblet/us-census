@@ -5,38 +5,36 @@
 
 <dom-module id="us-census">
     <template>
-        <my-location data="{{location}}"></my-location>
-
-        <us-census-geocoder latitude="[[location.latitude]]" longitude="[[location.longitude]]" county="{{county}}" state="{{state}}"></us-census-geocoder>
+        <us-census-geocoder latitude="[[latitude]]" longitude="[[longitude]]" county="{{county}}" state="{{state}}"></us-census-geocoder>
+<!--
         <us-census-population state="{{state}}"></us-census-population>
+-->
     </template>
     <script>
-        class UsCensus extends Polymer.Element {
+        class UsCensus extends SingletonMixin(Polymer.Element) {
             static get is() {
                 return 'us-census';
             }
 
             static get properties() {
                 return {
-                    stateCode: {
+                    // Input
+                    latitude: {
                         type: String
                     },
-                    geocoder: {
-                        type: Object
+                    longitude: {
+                        type: String
+                    },
+                    // Output
+                    county: {
+                        type: Object,
+                        notify: true
                     },
                     state: {
                         type: Object,
                         notify: true
-                    },
-                    county: {
-                        type: Object,
-                        notify: true
                     }
                 }
-            }
-
-            static get observers() {
-                return []
             }
         }
 
