@@ -1,10 +1,9 @@
-<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 
-<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
-
-<link rel="import" href="../../lib/my-location/my-location.html">
-
-<link rel="import" href="../../../bower_components/my-debug/my-debug.html">
+<!--
+<link rel="import" href="../my-debug/my-debug.html">
+-->
 
 <dom-module id="us-census-geocoder">
     <template>
@@ -12,8 +11,12 @@
         <!--
                 <app-data data="{{data}}"></app-data>
         -->
+<!--
         <map-object source="{{county}}" target="{{data.location.county}}"></map-object>
+-->
+<!--
         <map-object source="{{state}}" target="{{data.location.state}}"></map-object>
+-->
     </template>
     <script>
         class UsCensusGeocoder extends Polymer.Element {
