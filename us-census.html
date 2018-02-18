@@ -1,17 +1,15 @@
 <link rel="import" href="../polymer/polymer-element.html">
 
-<link rel="import" href="us-census-geocoder.html">
-<link rel="import" href="us-census-population.html">
+<link rel="import" href="./us-census-geocoder.html">
+<link rel="import" href="./us-census-population.html">
 
 <dom-module id="us-census">
     <template>
         <us-census-geocoder latitude="[[latitude]]" longitude="[[longitude]]" county="{{county}}" state="{{state}}"></us-census-geocoder>
-<!--
         <us-census-population state="{{state}}"></us-census-population>
--->
     </template>
     <script>
-        class UsCensus extends SingletonMixin(Polymer.Element) {
+        class UsCensus extends Polymer.MutableData(Polymer.Element) {
             static get is() {
                 return 'us-census';
             }
