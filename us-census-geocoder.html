@@ -37,7 +37,7 @@
                     },
                     _format: {
                         type: String,
-                        value: "json"
+                        value: "jsonp"
                     },
                     _inputFormat: {
                         type: String,
@@ -111,6 +111,7 @@
             handleResponse(event) {
                 let response = event.detail.response;
                 this._rawData = response
+                console.log(response);
                 // County
                 let county = response.result.geographies.Counties[0]
                 if (county.NAME) {
@@ -123,13 +124,14 @@
                     this.set('county', newCounty);
                 }
                 else {
-                    alert("Error");
+                    // alert("Error");
                 }
                 // State
                 let state = response.result.geographies.States[0];
                 if (state.NAME) {
                     let newState = {}
                     newState.name = state.NAME;
+                    newState.abbreviation = state.STUSAB;
                     newState.areaLand = state.AREALAND;
                     newState.areaLandFormatted = state.AREALAND.toLocaleString();
                     newState.areaWater = state.AREAWATER;
@@ -138,7 +140,7 @@
                     this.set('state', newState);
                 }
                 else {
-                    alert("Error");
+                    // alert("Error");
                 }
 
                 console.log(state);

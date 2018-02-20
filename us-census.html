@@ -6,7 +6,11 @@
 <dom-module id="us-census">
     <template>
         <us-census-geocoder latitude="[[latitude]]" longitude="[[longitude]]" county="{{county}}" state="{{state}}"></us-census-geocoder>
+        <!--
+        Too many requests
+
         <us-census-population state="{{state}}"></us-census-population>
+        -->
     </template>
     <script>
         class UsCensus extends Polymer.MutableData(Polymer.Element) {
